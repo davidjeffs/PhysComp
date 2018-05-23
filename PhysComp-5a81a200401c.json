@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "physcomp-202515",
+  "private_key_id": "5a81a200401c5c80680e36e16a12d798c83fe872",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDfjpa7BNsYEFCA\nZqAOxkdSaM6GEgYfmAFOxZ7nWqR6xVquKTWPghJgfw6yM9WmtN5EfAhMwlm4IYyK\nX2hVdJHhBxm9yBfZZdO9GVffey6cvcBlkNhNQRU0rGTcaW23XeJo3VLuhTrKs1iw\n4DBGbjkGRvNP831Rn4OctouRJwcDKXnKy8nLgI+1IFB2O4bSRn+HURRwHqqf3KtR\nYpMNExRjccGAW5ge+TYEx7sNPTwb6O9IuDeXvR7X/l/VcI7+i/MVZUanUuHvd5k9\nKhz8wf1rOkIPYixvz+D48/zehKicxNvYXonlEgWh2VFsyePRAF3PGaJF21XZgV/E\nKr897IPbAgMBAAECggEAZctGDCNyZfsrxMO2FvQnDrnFbFvxqNosokMvD3aBFZwe\npdYC2vUlzAWe2frrSozp9nIpz1Xhx4uTNICr/9lkAXybtoRRg76vktfi4NJ0z49B\nd53kOA0uDD2BcbGZ8VhRG2HH/O7ybdELTgLPSIqw8ZBGAz5CbnO9WJLwayhDs6aJ\nZ96H6cKXlCHa+v9D1Xjz6TBZp++7GdVHZHJm+nNj37Trz4+RgmqHJwN554iyGblZ\nUmhczPCq5O3lB1c//BEXrzwF7ESYanAoAcWJGPiJ0GGKVxSrq4iBd+6vraQL44Up\nZdDVAX4IyYQ8Ad0qi+6KKmr79TLvVEMsfG8rnXS43QKBgQD8+nhbXextXGt3897O\n7K7u0x4EYq+Gza0jbMxGmH7LP140vUlqWLJH5/Pk07LpnGIcoJZJI4NHICK4Vuu+\nUp6exjwgcsrYw9A72tjojFOC2XUOpTwgf36vNOqKgjucmPI9DZXeH2dXo6Ygwuqa\nF+tg49d+TZ+pcs/MsJ90aVw+3QKBgQDiOig0k0tviz5t5RrOQUy69ydVLUVAAXNo\nU2hwE0KBwlzo+5NLqr9yYdz1/uib77ozN0dapCI8UKMbwSNlu0uJuch4gIZ3+OBG\nrDRu4rGeARaVrG1fKa94M4yunCFMJxbTWo9o9Fjd7P/jt2mCERb10PNcBnuxAZXn\n/cL1cz12FwKBgCnOAkGm/cD8us2xwSoUtrvEq3syC6uNJYVrHz6zSJCxwhGZDh7C\n1YNIc2dnDHPKYfQ1HWCsu67vQo2P35kt8gRu4dTC4356rViWy61yMwK2iL+I0qzU\nJM0zQ2bsKomwRKeOLSvtqJg09OkJDNe2CDGUtTGsBixsSqaasV79Yj8JAoGATQ9q\nap5R7+kKlvyXqPJtZLKT31vQXwEfgsYGqUamPPUsGOC5R+kd1aSoU9NFAPkkABYw\nZBvM3abKKMYdfKXUEVILi6CcLXnFS82U/sCRqDTOsKVPjD7y2osUvNXKMdqO1+fd\nOe8h5la4w6TSd8/CdnF6tDoxIBZeLewu4NUkdnkCgYB793nlI05QVX+pHsEFJMMU\nttI2vWvf4GDu4/41Sbyd/KHXlK+DE6OSf+E+MmtqB1dBy70Dmq1fDEFjbfaxBO/8\nUR1Ys8ravkltz1SgN4z7saHePYVXwHu63Elgh9YpW4LuR9n5SiWE2klKuE6dnIhN\nb/t55newW589VDzHA7vs+A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "physical-computing@physcomp-202515.iam.gserviceaccount.com",
+  "client_id": "118410058572204637699",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/physical-computing%40physcomp-202515.iam.gserviceaccount.com"
+}
