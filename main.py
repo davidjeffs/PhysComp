@@ -1,16 +1,11 @@
 import synthesize_text
 import transcribe_streaming_mic
-import asyncio
 import time
-import pyttsx3
 import random
 import threading
 from  AppKit import NSSpeechSynthesizer
 
-engine = pyttsx3.init()
-voices = engine.getProperty('voices')
-engine.setProperty('rate', 150)
-engine.setProperty('voice', voices[10].id)
+
 
 nssp = NSSpeechSynthesizer
 
@@ -24,11 +19,7 @@ def speak_text(text):
     while ve.isSpeaking():
         time.sleep(0.1)  
 
-def read_post():
-    #Filler for when we pull data from facebook
-    speak_text('Joe Bloggs posted: I love it, it is good, weed is amazing man oh man oh man')
-    
-    
+##################### READ A POST AND SUGGEST OPTIONS TO INTERACT WITH IT ##################
 def read_post_sequence():
     audio = threading.Thread(target=read_post_sequence_audio)
     options = threading.Thread(target=read_post_options)
@@ -37,9 +28,10 @@ def read_post_sequence():
 
 def read_post_sequence_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
-    read_post()
+    ## need to replace the message variable with the message pulled from facebook ###
+    message = 'Joe Bloggs posted: I love it, it is good, weed is amazing man oh man oh man'
     time.sleep(1)
-    speak_text('Please dial one to read the next ' + typeofmessage + '. two to read the ' + typeofmessage + ' again. three to add a reaction. four to comment. five to share this ' + typeofmessage + ',dial nine to listen again, dial zero to go back')
+    speak_text(message + 'Please dial one to read the next ' + typeofmessage + '. two to read the ' + typeofmessage + ' again. three to add a reaction. four to comment. five to share this ' + typeofmessage + ',dial nine to listen again, dial zero to go back')
     
 def read_post_options(typeofmessage):
     try:
@@ -50,10 +42,12 @@ def read_post_options(typeofmessage):
     else:    
         #read the next post.
         if (int(answer)==1):
+            ### need function here to read the next wall post###
             read_post_sequence_audio(typeofmessage)
 
         #read the same post again
         elif (int(answer)==2):
+            ### need function here to re-read the same wall post ###
             read_post_sequence_audio(typeofmessage)
 
         #add a reaction to the post
@@ -63,11 +57,20 @@ def read_post_options(typeofmessage):
         #comment on the post
         elif (int(answer)==4):
             reaction = 'wow'
+            
+        #share this post
+        elif (int(answer)==4):
+            reaction = 'wow'
 
         #share the post
-        elif (int(answer)==5):
+        elif (int(answer)==9):
+            read_post_sequence()
+            
+        #share the post
+        elif (int(answer)==0):
             reaction = 'sad'
-
+            
+##################################################################################################
             
 def news_feed_sequence(typeofmessage):
     audio = threading.Thread(target=news_feed_sequence_audio, args=(typeofmessage,))
@@ -78,35 +81,39 @@ def news_feed_sequence(typeofmessage):
 def news_feed_sequence_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
     ## this needs to be changed to read the first/next news post#
-    read_post()
-    speak_text('Please dial one to add a reaction. two to add a comment. three to share this post. four to listen to the next post, dial nine to listen again, dial zero to go back')
+    message = "this is the next post"
+    speak_text(message + 'Please dial one to add a reaction. two to add a comment. three to share this post. four to listen to the next post, dial nine to listen again, dial zero to go back')
     
 def news_feed_options(typeofmessage):
     try:
         answer = input_with_timeout("answer:", 15)
     except TimeoutExpired:
         while not ve.isSpeaking():
-            news_feed_sequence_audio(typeofmessage)
+            news_feed_sequence(typeofmessage)
     else:
         if (int(answer)==1):
-
+            
             reaction_list_sequence(typeofmessage)
         elif (int(answer)==2):
-
-            comment_list_audio(typeofmessage)
+            ### needs extra variables to comment on the current post ####
+            comments_list(typeofmessage)
         elif (int(answer)==3):
-
-            share_list_audio(typeofmessage)    
+            ### needs extra variables to share the current post ####
+            share_sequence(typeofmessage)    
         elif (int(answer)==4):
-            reaction = 'wow'
+            ### this needs a function to listen to the next news post
+            news_feed_sequence_audio(typeofmessage)        
         elif (int(answer)==5):
             reaction = 'sad'
         elif (int(answer)==6):
             reaction = 'angry'
+
             
-def comments_list():
-    audio = threading.Thread(target=comment_list_audio)
-    options = threading.Thread(target=comment_list_options)
+################# ADDING A COMMENT TO A POST #####################################  
+
+def comments_list(typeofmessage):
+    audio = threading.Thread(target=comment_list_audio, args=(typeofmessage,))
+    options = threading.Thread(target=comment_list_options, args=(typeofmessage,))
     audio.start()
     options.start() 
     
@@ -122,17 +129,18 @@ def comment_list_options(typeofmessage):
         comment_list_audio(typeofmessage)
     else:
         if (int(answer)==1):
-
+            ### create a new comment for the site ###
             write_post(typeofmessage)
         elif (int(answer)==2):
 
-            read_post_sequence_audio(typeofmessage)
+            read_post_sequence(typeofmessage)
         elif (int(answer)==9):
 
-            comment_list_audio(typeofmessage)
+            comments_list(typeofmessage)
         elif (int(answer)==0):
+            read_post_sequence(typeofmessage)
 
-            read_post_sequence_audio(typeofmessage)
+#####################################################################            
 
 def check_for_comments(typeofmessage):
     NSSpeechImmediateBoundary = 0
@@ -180,7 +188,9 @@ def reaction_list_options(typeofmessage):
         #need code here to add reaction to the post being looked at
         if (typeofmessage == "news post"):
             news_feed_sequence(typeofmessage)
-
+            
+            
+#################### RECORD AND POST TO WALL ################################
 def write_post_sequence(typeofmessage):
     audio = threading.Thread(target=write_post_audio, args=(typeofmessage,))
     options = threading.Thread(target=write_post_options, args=(typeofmessage,))
@@ -217,7 +227,6 @@ def write_post_options(typeofmessage):
     
     listen_and(typeofmessage)
     
-
 def listen_and(typeofmessage):
     audio = threading.Thread(target=listen_to, args=(typeofmessage,))
     audio.start()
@@ -236,7 +245,7 @@ def listen_to(typeofmessage):
 def post_message(typeofmessage, post):
     NSSpeechImmediateBoundary = 0
     try:
-        answer = input_with_timeout("answer:", 4)
+        answer = input_with_timeout("answer:", 15)
     except TimeoutExpired:
         listen_and_post(typeofmessage)
     else:
@@ -248,9 +257,83 @@ def post_message(typeofmessage, post):
              
             news_feed_sequence_audio(typeofmessage)
             
-def share_sequence():
-    audio = threading.Thread(target=messages_sequence_audio)
-    options = threading.Thread(target=messages_options)
+
+############################################################################################## 
+
+
+
+#################### RECORD AND POST COMMENT ################################
+def write_comment_sequence(typeofmessage):
+    audio = threading.Thread(target=write_comment_audio, args=(typeofmessage,))
+    options = threading.Thread(target=write_comment_options, args=(typeofmessage,))
+    audio.start()
+    options.start()    
+        
+    
+def write_comment_audio(typeofmessage):
+    NSSpeechImmediateBoundary = 0
+    speak_text('Please record your comment after the beep.')
+    speak_text('beeeeeeeeeeeeeeeeeeeeeeeep')
+    listen_and_comment(typeofmessage)
+    
+def listen_and_comment(typeofmessage):
+    audio = threading.Thread(target=listen_to_comment, args=(typeofmessage,))
+    audio.start()
+    
+def listen_to_comment(typeofmessage):
+    NSSpeechImmediateBoundary = 0
+    text = transcribe_streaming_mic.main(0)
+    time.sleep(1)
+    speak_text('Your comment has been posted.')
+    comment_and_post(typeofmessage, text)
+
+def comment_and_post(typeofmessage, post):
+    audio = threading.Thread(target=post_comment, args=(typeofmessage,post))
+    audio.start()
+
+    
+def post_comment(typeofmessage, post):
+    NSSpeechImmediateBoundary = 0
+    write_post(typeofmessage)
+    speak_text('Your comment has been posted.') 
+    after_comment(typeofmessage)
+    
+def after_comment(typeofmessage):
+    audio = threading.Thread(target=after_comment_audio, args=(typeofmessage,))
+    options = threading.Thread(target=after_comment_options, args=(typeofmessage,))
+    audio.start()
+    options.start()
+    
+def after_comment_audio(typeofmessage):
+    NSSpeechImmediateBoundary = 0
+    speak_text('Please dial one to continue with this conversation, dial two to listen to the next latest message, dial zero to go back, dial nine to listen again.')
+    
+def after_comment_options(typeofmessage):
+    NSSpeechImmediateBoundary = 0
+    try:
+        answer = input_with_timeout("answer:", 15)
+    except TimeoutExpired:
+        while not ve.isSpeaking():
+            after_comment(typeofmessage)
+    else:
+        if (int(answer)==1):
+
+            messaging_sequence()
+        elif (int(answer)==2):
+            messaging_sequence()
+        elif (int(answer)==9):
+            opening_sequence()
+        elif (int(answer)==0):
+            after_comment()
+            
+
+############################################################################################## 
+            
+
+######################## SHARING A POST #######################################
+def share_sequence(typeofmessage):
+    audio = threading.Thread(target=share_list_audio, args=(typeofmessage,))
+    options = threading.Thread(target=share_list_options, args=(typeofmessage,))
     audio.start()
     options.start()
             
@@ -267,28 +350,62 @@ def share_list_options(typeofmessage):
         answer = input_with_timeout("answer:", 15)
     except TimeoutExpired:
         while not ve.isSpeaking():
-            share_sequence()
+            share_sequence(typeofmessage)
     else:
         if (int(answer)==1):
-
-            write_post(typeofmessage)
+            write_sharecomment_sequence(typeofmessage, 1)
         elif (int(answer)==2):
-
-            ve.startSpeakingString_('The ' + typeofmessage + ' has been shared. ')
-            while not ve.isSpeaking():
-                time.sleep(0.1)
-
-            while ve.isSpeaking():
-                time.sleep(0.1)
-            read_post_sequence_audio(typeofmessage)
+            write_sharecomment_sequence(typeofmessage, 0)
+            read_post_sequence(typeofmessage)
         elif (int(answer)==9):
-
             share_list_audio(typeofmessage)
         elif (int(answer)==0):
-
             read_post_sequence_audio(typeofmessage)
+            
+            
+ #################################################################################################           
+
+
+#################### ADD COMMENT TO SHARE ################################
+def write_sharecomment_sequence(typeofmessage, shareit):
+    if (shareit ==1):
+        audio = threading.Thread(target=write_sharecomment_audio, args=(typeofmessage,))
+        audio.start()
+    else:
+        sharecomment_sequence("")
+        
+    
+def write_sharecomment_audio(typeofmessage):
+    NSSpeechImmediateBoundary = 0
+    speak_text('Please record your comment after the beep. beeeeeeeeeeeeeeeeeeeeeeeep')
+    NSSpeechImmediateBoundary = 0
+    text = ""
+    while (text == ""):
+        text = transcribe_streaming_mic.main(0)
+    sharecomment_sequence(text)
+
+def sharecomment_sequence(text):
+    audio = threading.Thread(target=sharethepost, args=(text,))
+    audio.start()    
+
+def sharethepost(message):
+    ### code here to share the post ###
+    NSSpeechImmediateBoundary = 0
+    if (message != ""):
+        comment = message
+    speak_text('The post has been shared. ')
+    news_feed_sequence("news post")
+    
+    
+    
 
             
+
+############################################################################################## 
+
+def read_message():
+    speak_text('Joe Bloggs posted: This is the latest message ')
+    
 def messaging_sequence():
     audio = threading.Thread(target=messages_sequence_audio)
     options = threading.Thread(target=messages_options)
@@ -297,36 +414,184 @@ def messaging_sequence():
         
 def messages_sequence_audio():
     NSSpeechImmediateBoundary = 0
+    
+    ####### need a function here to collect the message ####
+    message = 'Joe Bloggs posted: This is the latest message '
     time.sleep(1)
-    speak_text('To access messages please select a person. Please dial one for David Jeffs, dial two for William Hayward, dial three for Julien Tran, dial four for Yaxin Cui, dial 8 for someone else, dial nine to listen again. dial zero to go back.')
+    speak_text(message + 'Please dial one to respond to this message, dial two for the next message, dial three to read the rest of the conversation, dial four to search for someone else, dial nine to listen again, dial zero to go back.')
 
 def messages_options(): 
     NSSpeechImmediateBoundary = 0
     try:
-        answer = input_with_timeout("answer:", 15)
+        answer = input_with_timeout("answer:", 30)
     except TimeoutExpired:
         while not ve.isSpeaking():
             messaging_sequence()
     else:
         if (int(answer)==1):
-
-            messaging('David Jeffs')
+            write_message_sequence()
         elif (int(answer)==2):
-
-            messaging('William Hayward')
+            ### this needs a funtion to go to the next persons message ###
+            messaging_sequence()
         elif (int(answer)==3):
-
-            messaging('Julien Tran')
+            ### this needs a function to go the next message with this person ####
+            messaging_sequence()
         elif (int(answer)==4):
-            messaging('Yaxin Cui')
+            search_and_message()
         elif (int(answer)==5):
             messaging('blah')
         elif (int(answer)==8):
             messaging_search()
         elif (int(answer)==9):
-            messages_sequence_audio()
+            messages_sequence()
         elif (int(answer)==0):
-            opening_sequence_audio()
+            opening_sequence()
+            
+
+    
+###############################################################################################
+
+#################### RECORD AND POST MESSAGE ################################
+def write_message_sequence():
+    audio = threading.Thread(target=write_message_audio)
+    audio.start()        
+    
+def write_message_audio():
+    NSSpeechImmediateBoundary = 0
+    speak_text('Please record your message after the beep.')
+    speak_text('beeeeeeeeeeeeeeeeeeeeeeeep')
+    listen_and_message()
+    
+def listen_and_message():
+    audio = threading.Thread(target=listen_to_message)
+    audio.start()
+    
+def listen_to_message():
+    NSSpeechImmediateBoundary = 0
+    ###listens to the person saying the message ###
+    text = ""
+    while (text == ""):
+        text = transcribe_streaming_mic.main(0)
+        time.sleep(1)
+    print(text)
+    speak_text(text) ## check to see if it works ##
+    #### code here to message the appropiate person ####
+    speak_text('Your message has been posted.')
+    after_message()
+    
+def after_message():
+    audio = threading.Thread(target=after_message_audio)
+    options = threading.Thread(target=after_message_options)
+    audio.start()
+    options.start()
+    
+def after_message_audio():
+    NSSpeechImmediateBoundary = 0
+    speak_text('Please dial one to continue with this conversation, dial two to listen to the next latest message, dial zero to go back, dial nine to listen again.')
+    
+def after_message_options():
+    NSSpeechImmediateBoundary = 0
+    try:
+        answer = input_with_timeout("answer:", 15)
+    except TimeoutExpired:
+        while not ve.isSpeaking():
+            after_comment()
+    else:
+        if (int(answer)==1):
+            ### the messages will be read again ###
+            messaging_sequence()
+        elif (int(answer)==2):
+            ### the next message from a different person will be read
+            messaging_sequence()
+        elif (int(answer)==9):
+            opening_sequence()
+        elif (int(answer)==0):
+            after_message()
+            
+
+############################################################################################## 
+
+##################### SEARCH FOR AND MESSAGE A NEW PERSON ##########################
+            
+def search_and_message():    
+    audio = threading.Thread(target=search_and_message_audio)
+    audio.start()
+
+def search_and_message_audio():
+    NSSpeechImmediateBoundary = 0
+    time.sleep(1)
+    speak_text('Please state your friends name after the beep')
+    speak_text('beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep')
+    listen_and_find()
+
+
+def listen_and_find():
+    audio = threading.Thread(target=listen_to_name)
+    audio.start()
+    
+def listen_to_name():
+    NSSpeechImmediateBoundary = 0
+    text = ""
+    while (text == ""):
+        text = transcribe_streaming_mic.main(0)
+    time.sleep(1)
+    check_name(text)
+
+def check_name(text):
+    audio = threading.Thread(target=name_check, args=(text,))
+    audio.start()
+
+    
+def name_check(name):
+    NSSpeechImmediateBoundary = 0
+    speak_text('Is your name spelt like this:')
+    NSSpeechImmediateBoundary = 0
+    for i in name.replace(" ",""):
+        speak_text(i)
+        time.sleep(0.5)
+    NSSpeechImmediateBoundary = 0
+    speak_text('Please dial one for yes, dial two for no')
+    
+    NSSpeechImmediateBoundary = 0
+    answer = input_with_timeout("answer:", 15)
+
+    if (int(answer)==1):
+        ## function to view latest messages from this person##
+        messaging_sequence()
+    elif (int(answer)==2):
+        search_and_message_spell()
+    elif (int(answer)==9):
+        opening_sequence()
+    elif (int(answer)==0):
+        after_comment()
+        
+########### SPELL NAME ############
+
+def search_and_message_spell():    
+    audio = threading.Thread(target=search_and_message_spelling_audio)
+    audio.start()
+
+def search_and_message_spelling_audio():
+    NSSpeechImmediateBoundary = 0
+    time.sleep(1)
+    speak_text('Please spell out your friends name after the beep. beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep')
+    listen_and_find_spelling()
+
+
+def listen_and_find_spelling():
+    audio = threading.Thread(target=listen_to_name_spelling)
+    audio.start()
+    
+def listen_to_name_spelling():
+    NSSpeechImmediateBoundary = 0
+    text = ""
+    while (text == ""):
+        text = transcribe_streaming_mic.main(1).replace("space", " ")
+    time.sleep(1)
+    check_name(text)
+    
+    
+####################################################################################
 
 def opening_sequence():
     audio = threading.Thread(target=opening_sequence_audio)
@@ -354,11 +619,10 @@ def opening_sequence_options():
 
             messaging_sequence()
         elif (int(answer)==2):
-
-            write_post_sequence("wall post")
+            news_feed_sequence("news post")
         elif (int(answer)==3):
 
-            news_feed_sequence("news post")
+            write_post_sequence("wall post")
         elif (int(answer)==9):
             opening_sequence()
 
