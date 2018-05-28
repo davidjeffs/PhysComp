@@ -4,7 +4,7 @@ import time
 import random
 import threading
 from  AppKit import NSSpeechSynthesizer
-
+from pysine import sine
 
 
 nssp = NSSpeechSynthesizer
@@ -43,16 +43,16 @@ def read_post_options(typeofmessage):
         #read the next post.
         if (int(answer)==1):
             ### need function here to read the next wall post###
-            read_post_sequence_audio(typeofmessage)
+            read_post_sequence(typeofmessage)
 
         #read the same post again
         elif (int(answer)==2):
             ### need function here to re-read the same wall post ###
-            read_post_sequence_audio(typeofmessage)
+            read_post_sequence(typeofmessage)
 
         #add a reaction to the post
         elif (int(answer)==3):
-            reaction_list_audio()
+            reaction_list()
 
         #comment on the post
         elif (int(answer)==4):
@@ -82,7 +82,7 @@ def news_feed_sequence_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
     ## this needs to be changed to read the first/next news post#
     message = "this is the next post"
-    speak_text(message + 'Please dial one to add a reaction. two to add a comment. three to share this post. four to listen to the next post, dial nine to listen again, dial zero to go back')
+    speak_text(message + 'Please dial one to add a reaction. two to add or view comments. three to share this post. four to listen to the next post, dial nine to listen again, dial zero to go back')
     
 def news_feed_options(typeofmessage):
     try:
@@ -130,7 +130,7 @@ def comment_list_options(typeofmessage):
     else:
         if (int(answer)==1):
             ### create a new comment for the site ###
-            write_post(typeofmessage)
+            write_comment_sequence(typeofmessage)
         elif (int(answer)==2):
 
             read_post_sequence(typeofmessage)
@@ -158,6 +158,7 @@ def reaction_list_sequence(typeofmessage):
 
 def reaction_list_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
+    time.sleep(1)
     speak_text('You have chosen to react. Please dial one to read the '+ typeofmessage + ' again. dial two to like this ' + typeofmessage + '. three to love this ' + typeofmessage + '. four to ha ha this ' + typeofmessage + '. five to wow this ' + typeofmessage + '. six to sad this ' + typeofmessage + '. seven to angry this ' + typeofmessage + ', dial nine to listen again, dial zero to go back.')    
     
 def reaction_list_options(typeofmessage):
@@ -200,47 +201,21 @@ def write_post_sequence(typeofmessage):
     
 def write_post_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
-    speak_text('Please record your '+ typeofmessage + ' after the beep. Please dial one to end the recording. dial zero to go back. dial nine to listen again.')
+    time.sleep(1)
+    speak_text('Please record your '+ typeofmessage + ' after the beep')
 
 def write_post_options(typeofmessage):
     NSSpeechImmediateBoundary = 0
-    try:
-        answer = input_with_timeout("answer:", 15)
-    except TimeoutExpired:
-        write_post_audio(typeofmessage)
-    else:
-        if (int(answer)==0):
-            if (typeofmessage=='comment'):
-    
-                read_post('comment')
-                comment_list_audio(typeofmessage)
-            if (typeofmessage=='shared post'):
-    
-                read_post('shared post')
-                read_post_sequence_audio(typeofmessage)
-        elif (int(answer)==9):
-
-            write_post(typeofmessage) 
-    
     time.sleep(1)
-    speak_text('Beep beep')
-    
-    listen_and(typeofmessage)
-    
-def listen_and(typeofmessage):
-    audio = threading.Thread(target=listen_to, args=(typeofmessage,))
-    audio.start()
-
-def and_post(typeofmessage, post):
-    audio = threading.Thread(target=post_message, args=(typeofmessage,post))
-    audio.start()
-
-def listen_to(typeofmessage):
-    NSSpeechImmediateBoundary = 0
+    sine(frequency=600.0, duration=0.5)  # plays a 1s sine wave at 440 Hz
     text = transcribe_streaming_mic.main(0)
     time.sleep(1)
     speak_text('You said ' + text +'. please dial 1 to post. dial 0 to record again.')
     and_post(typeofmessage, text)
+
+def and_post(typeofmessage, post):
+    audio = threading.Thread(target=post_message, args=(typeofmessage,post))
+    audio.start()
     
 def post_message(typeofmessage, post):
     NSSpeechImmediateBoundary = 0
@@ -252,7 +227,8 @@ def post_message(typeofmessage, post):
         if (int(answer)==0):
             write_post(typeofmessage)
         elif (int(answer)==1):
-
+            time.sleep(1)
+            #post the message to your wall
             speak_text('Your ' + typeofmessage +' has been posted.')
              
             news_feed_sequence_audio(typeofmessage)
@@ -265,15 +241,14 @@ def post_message(typeofmessage, post):
 #################### RECORD AND POST COMMENT ################################
 def write_comment_sequence(typeofmessage):
     audio = threading.Thread(target=write_comment_audio, args=(typeofmessage,))
-    options = threading.Thread(target=write_comment_options, args=(typeofmessage,))
     audio.start()
-    options.start()    
         
     
 def write_comment_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
     speak_text('Please record your comment after the beep.')
-    speak_text('beeeeeeeeeeeeeeeeeeeeeeeep')
+    time.sleep(1)
+    sine(frequency=600.0, duration=0.5) 
     listen_and_comment(typeofmessage)
     
 def listen_and_comment(typeofmessage):
@@ -285,17 +260,6 @@ def listen_to_comment(typeofmessage):
     text = transcribe_streaming_mic.main(0)
     time.sleep(1)
     speak_text('Your comment has been posted.')
-    comment_and_post(typeofmessage, text)
-
-def comment_and_post(typeofmessage, post):
-    audio = threading.Thread(target=post_comment, args=(typeofmessage,post))
-    audio.start()
-
-    
-def post_comment(typeofmessage, post):
-    NSSpeechImmediateBoundary = 0
-    write_post(typeofmessage)
-    speak_text('Your comment has been posted.') 
     after_comment(typeofmessage)
     
 def after_comment(typeofmessage):
@@ -306,7 +270,7 @@ def after_comment(typeofmessage):
     
 def after_comment_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
-    speak_text('Please dial one to continue with this conversation, dial two to listen to the next latest message, dial zero to go back, dial nine to listen again.')
+    speak_text('Please dial one to continue with this comment tree, dial two to listen to the next comment, dial zero to go back, dial nine to listen again.')
     
 def after_comment_options(typeofmessage):
     NSSpeechImmediateBoundary = 0
@@ -377,7 +341,9 @@ def write_sharecomment_sequence(typeofmessage, shareit):
     
 def write_sharecomment_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
-    speak_text('Please record your comment after the beep. beeeeeeeeeeeeeeeeeeeeeeeep')
+    speak_text('Please record your comment after the beep.')
+    time.sleep(1)
+    sine(frequency=600.0, duration=0.5)  # plays a 1s sine wave at 440 Hz
     NSSpeechImmediateBoundary = 0
     text = ""
     while (text == ""):
@@ -458,8 +424,10 @@ def write_message_sequence():
     
 def write_message_audio():
     NSSpeechImmediateBoundary = 0
+    time.sleep(1)
     speak_text('Please record your message after the beep.')
-    speak_text('beeeeeeeeeeeeeeeeeeeeeeeep')
+    time.sleep(1)
+    sine(frequency=600.0, duration=0.5)  # plays a 1s sine wave at 440 Hz
     listen_and_message()
     
 def listen_and_message():
@@ -521,7 +489,8 @@ def search_and_message_audio():
     NSSpeechImmediateBoundary = 0
     time.sleep(1)
     speak_text('Please state your friends name after the beep')
-    speak_text('beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep')
+    time.sleep(1)
+    sine(frequency=600.0, duration=0.5)  # plays a 1s sine wave at 440 Hz
     listen_and_find()
 
 
@@ -574,7 +543,10 @@ def search_and_message_spell():
 def search_and_message_spelling_audio():
     NSSpeechImmediateBoundary = 0
     time.sleep(1)
-    speak_text('Please spell out your friends name after the beep. beeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep')
+    speak_text('Please spell out your friends name after the beep.')
+    time.sleep(1)
+    sine(frequency=600.0, duration=0.5)  # plays a 1s sine wave at 440 Hz
+
     listen_and_find_spelling()
 
 
@@ -621,16 +593,27 @@ def opening_sequence_options():
         elif (int(answer)==2):
             news_feed_sequence("news post")
         elif (int(answer)==3):
-
             write_post_sequence("wall post")
         elif (int(answer)==9):
             opening_sequence()
-
-
+        elif (int(int(answer)>3 and int(answer)<9)):
+            NSSpeechImmediateBoundary = 0
+            speak_text(answer + ' is not a valid option')
+            opening_sequence()
+            
 
 
 def main():
+#    sine(frequency=1000.0, duration=0.4)
+#    sine(frequency=2200.0, duration=0.2)
+#    sine(frequency=1000.0, duration=0.4)
+#    sine(frequency=2200.0, duration=0.2)
+#    sine(frequency=1900.0, duration=0.1)
+#    sine(frequency=3200.0, duration=0.8)
+
+
     opening_sequence()
+
     #opening_sequence_audio()
     #opening_sequence_options()
 
