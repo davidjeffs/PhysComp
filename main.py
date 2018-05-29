@@ -52,23 +52,23 @@ def read_post_options(typeofmessage):
 
         #add a reaction to the post
         elif (int(answer)==3):
-            reaction_list()
+            reaction_list_sequence()
 
         #comment on the post
         elif (int(answer)==4):
-            reaction = 'wow'
+            comment_list_sequence()
             
         #share this post
         elif (int(answer)==4):
-            reaction = 'wow'
-
+            share_sequence()
+            
         #share the post
         elif (int(answer)==9):
             read_post_sequence()
             
         #share the post
         elif (int(answer)==0):
-            reaction = 'sad'
+            news_feed_sequence()
             
 ##################################################################################################
             
@@ -194,24 +194,23 @@ def reaction_list_options(typeofmessage):
 #################### RECORD AND POST TO WALL ################################
 def write_post_sequence(typeofmessage):
     audio = threading.Thread(target=write_post_audio, args=(typeofmessage,))
-    options = threading.Thread(target=write_post_options, args=(typeofmessage,))
     audio.start()
-    options.start()    
         
     
 def write_post_audio(typeofmessage):
     NSSpeechImmediateBoundary = 0
     time.sleep(1)
     speak_text('Please record your '+ typeofmessage + ' after the beep')
-
-def write_post_options(typeofmessage):
-    NSSpeechImmediateBoundary = 0
     time.sleep(1)
     sine(frequency=600.0, duration=0.5)  # plays a 1s sine wave at 440 Hz
-    text = transcribe_streaming_mic.main(0)
+    NSSpeechImmediateBoundary = 0
+    text = ""
+    while (text == ""):
+        text = transcribe_streaming_mic.main(0)
     time.sleep(1)
     speak_text('You said ' + text +'. please dial 1 to post. dial 0 to record again.')
     and_post(typeofmessage, text)
+
 
 def and_post(typeofmessage, post):
     audio = threading.Thread(target=post_message, args=(typeofmessage,post))
@@ -225,7 +224,7 @@ def post_message(typeofmessage, post):
         listen_and_post(typeofmessage)
     else:
         if (int(answer)==0):
-            write_post(typeofmessage)
+            write_post_sequence(typeofmessage)
         elif (int(answer)==1):
             time.sleep(1)
             #post the message to your wall
@@ -257,7 +256,9 @@ def listen_and_comment(typeofmessage):
     
 def listen_to_comment(typeofmessage):
     NSSpeechImmediateBoundary = 0
-    text = transcribe_streaming_mic.main(0)
+    text = ""
+    while (text == ""):
+        text = transcribe_streaming_mic.main(0)
     time.sleep(1)
     speak_text('Your comment has been posted.')
     after_comment(typeofmessage)
@@ -322,9 +323,9 @@ def share_list_options(typeofmessage):
             write_sharecomment_sequence(typeofmessage, 0)
             read_post_sequence(typeofmessage)
         elif (int(answer)==9):
-            share_list_audio(typeofmessage)
+            share_list_sequence(typeofmessage)
         elif (int(answer)==0):
-            read_post_sequence_audio(typeofmessage)
+            read_post_sequence(typeofmessage)
             
             
  #################################################################################################           
@@ -362,10 +363,7 @@ def sharethepost(message):
     speak_text('The post has been shared. ')
     news_feed_sequence("news post")
     
-    
-    
-
-            
+       
 
 ############################################################################################## 
 
@@ -591,9 +589,11 @@ def opening_sequence_options():
 
             messaging_sequence()
         elif (int(answer)==2):
-            news_feed_sequence("news post")
-        elif (int(answer)==3):
             write_post_sequence("wall post")
+
+        elif (int(answer)==3):
+            news_feed_sequence("news post")
+
         elif (int(answer)==9):
             opening_sequence()
         elif (int(int(answer)>3 and int(answer)<9)):
@@ -604,14 +604,6 @@ def opening_sequence_options():
 
 
 def main():
-#    sine(frequency=1000.0, duration=0.4)
-#    sine(frequency=2200.0, duration=0.2)
-#    sine(frequency=1000.0, duration=0.4)
-#    sine(frequency=2200.0, duration=0.2)
-#    sine(frequency=1900.0, duration=0.1)
-#    sine(frequency=3200.0, duration=0.8)
-
-
     opening_sequence()
 
     #opening_sequence_audio()
